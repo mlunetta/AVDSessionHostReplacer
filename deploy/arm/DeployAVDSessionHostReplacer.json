@@ -419,7 +419,7 @@
     "varGraphEnvironmentNames": "[if(parameters('UseGovDodGraph'), createArray('Global', 'USGovDod', 'China'), createArray('Global', 'USGov', 'China'))]",
     "varGraphEnvironmentName": "[variables('varGraphEnvironmentNames')[indexOf(variables('varAzureEnvironments'), environment().name)]]",
     "varUniqueString": "[uniqueString(resourceGroup().id, parameters('HostPoolName'))]",
-    "varFunctionAppName": "[format('AVDSessionHostReplacer-{0}', uniqueString(resourceGroup().id, parameters('HostPoolName')))]",
+    "varFunctionAppName": "[format('func-avdshr-{0}', uniqueString(resourceGroup().id, parameters('HostPoolName')))]",
     "varFunctionAppIdentity": "[if(parameters('UseUserAssignedManagedIdentity'), createObject('type', 'UserAssigned', 'userAssignedIdentities', createObject(format('{0}', parameters('UserAssignedManagedIdentityResourceId')), createObject())), createObject('type', 'SystemAssigned'))]"
   },
   "resources": [
@@ -659,9 +659,11 @@
             }
           },
           "variables": {
-            "varStorageAccountName": "[format('stavdrpfunc{0}', uniqueString(parameters('FunctionAppName')))]",
-            "varLogAnalyticsWorkspaceName": "[format('{0}-law', parameters('FunctionAppName'))]",
-            "varAppServicePlanName": "[format('{0}-asp', parameters('FunctionAppName'))]"
+            "varUniqueString": "[split(parameters('FunctionAppName'), '-')[2]]",
+            "varStorageAccountName": "[format('stavdshr{0}', variables('varUniqueString'))]",
+            "varLogAnalyticsWorkspaceName": "[format('log-avdshr-{0}', variables('varUniqueString'))]",
+            "varAppServicePlanName": "[format('asp-avdshr-{0}', variables('varUniqueString'))]",
+            "varApplicationInsightsName": "[format('appi-avdshr-{0}', variables('varUniqueString'))]"
           },
           "resources": [
             {
@@ -714,7 +716,7 @@
               "condition": "[parameters('EnableMonitoring')]",
               "type": "Microsoft.Insights/components",
               "apiVersion": "2020-02-02",
-              "name": "[variables('varAppServicePlanName')]",
+              "name": "[variables('varApplicationInsightsName')]",
               "location": "[parameters('Location')]",
               "kind": "web",
               "properties": {
@@ -740,7 +742,7 @@
                 "siteConfig": {
                   "use32BitWorkerProcess": false,
                   "powerShellVersion": "7.4",
-                  "appSettings": "[union(createArray(createObject('name', 'FUNCTIONS_EXTENSION_VERSION', 'value', '~4'), createObject('name', 'FUNCTIONS_WORKER_RUNTIME', 'value', 'powershell'), createObject('name', 'AzureWebJobsStorage', 'value', format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', variables('varStorageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('varStorageAccountName')), '2022-05-01').keys[0].value)), createObject('name', 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING', 'value', format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', variables('varStorageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('varStorageAccountName')), '2022-05-01').keys[0].value)), createObject('name', 'APPINSIGHTS_INSTRUMENTATIONKEY', 'value', reference(resourceId('Microsoft.Insights/components', variables('varAppServicePlanName')), '2020-02-02').InstrumentationKey), createObject('name', 'WEBSITE_CONTENTSHARE', 'value', toLower(parameters('FunctionAppName')))), if(parameters('EnableMonitoring'), createArray(createObject('name', 'APPINSIGHTS_INSTRUMENTATIONKEY', 'value', reference(resourceId('Microsoft.Insights/components', variables('varAppServicePlanName')), '2020-02-02').InstrumentationKey)), createArray()), parameters('ReplacementPlanSettings'))]",
+                  "appSettings": "[union(createArray(createObject('name', 'FUNCTIONS_EXTENSION_VERSION', 'value', '~4'), createObject('name', 'FUNCTIONS_WORKER_RUNTIME', 'value', 'powershell'), createObject('name', 'AzureWebJobsStorage', 'value', format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', variables('varStorageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('varStorageAccountName')), '2022-05-01').keys[0].value)), createObject('name', 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING', 'value', format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', variables('varStorageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('varStorageAccountName')), '2022-05-01').keys[0].value)), createObject('name', 'APPINSIGHTS_INSTRUMENTATIONKEY', 'value', reference(resourceId('Microsoft.Insights/components', variables('varApplicationInsightsName')), '2020-02-02').InstrumentationKey), createObject('name', 'WEBSITE_CONTENTSHARE', 'value', toLower(parameters('FunctionAppName')))), if(parameters('EnableMonitoring'), createArray(createObject('name', 'APPINSIGHTS_INSTRUMENTATIONKEY', 'value', reference(resourceId('Microsoft.Insights/components', variables('varApplicationInsightsName')), '2020-02-02').InstrumentationKey)), createArray()), parameters('ReplacementPlanSettings'))]",
                   "ftpsState": "Disabled",
                   "cors": {
                     "allowedOrigins": [
@@ -750,7 +752,7 @@
                 }
               },
               "dependsOn": [
-                "[resourceId('Microsoft.Insights/components', variables('varAppServicePlanName'))]",
+                "[resourceId('Microsoft.Insights/components', variables('varApplicationInsightsName'))]",
                 "[resourceId('Microsoft.Web/serverfarms', variables('varAppServicePlanName'))]",
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('varStorageAccountName'))]"
               ]
@@ -784,7 +786,7 @@
             "value": "[parameters('Location')]"
           },
           "KeyVaultName": {
-            "value": "[format('kv-AVDSHR-{0}', variables('varUniqueString'))]"
+            "value": "[format('kv-avdshr-{0}', variables('varUniqueString'))]"
           },
           "DomainJoinPassword": {
             "value": "[parameters('ADJoinUserPassword')]"
