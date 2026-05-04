@@ -726,7 +726,7 @@
 							"name": "_TargetVMAgeDays",
 							"type": "Microsoft.Common.TextBox",
 							"label": "Target VM Age (Days)",
-							"toolTip": "The maximum age of a VM in days before it is replaced. This is compared to the value of the Deploy Timestamp Tag.",
+							"toolTip": "The maximum age of a VM in days before it is replaced. This is compared to the value of the Deploy Timestamp Tag. Set as '0' to disable age based replacement and only replace on new image version if that option is enabled.",
 							"defaultValue": 45,
 							"constraints": {
 								"required": false
@@ -736,7 +736,7 @@
 							"name": "_DrainGracePeriodHours",
 							"type": "Microsoft.Common.TextBox",
 							"label": "Drain Grace Period (Hours)",
-							"toolTip": "The number of hours to wait after marking a VM for drain before deleting it. This is to allow users to finish their sessions before the VM is deleted.",
+							"toolTip": "The number of hours to wait after marking a VM for drain before deleting it. This is to allow users to finish their sessions before the VM is deleted. Set as '0' to disable grace period and wait until all sessions are disconnected before deleting the VM.",
 							"defaultValue": 24,
 							"constraints": {
 								"required": false

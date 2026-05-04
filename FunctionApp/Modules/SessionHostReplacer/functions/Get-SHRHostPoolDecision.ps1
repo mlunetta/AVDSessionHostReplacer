@@ -44,7 +44,6 @@ function Get-SHRHostPoolDecision {
         $targetReplacementDate = (Get-Date).AddDays(-$TargetVMAgeDays)
         [array] $sessionHostsOldAge = $SessionHosts | Where-Object { $_.DeployTimestamp -lt $targetReplacementDate }
         Write-PSFMessage -Level Host -Message "Found {0} session hosts to replace due to old age. {1}" -StringValues $sessionHostsOldAge.Count, ($sessionHostsOldAge.VMName -join ',')
-
     }
 
     if ($ReplaceSessionHostOnNewImageVersion) {

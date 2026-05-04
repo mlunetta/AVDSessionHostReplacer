@@ -32,7 +32,9 @@ function Remove-SHRSessionHost {
         # Does the session host currently have sessions?
         # No sessions => Delete + Remove from host pool
         # Is the session host in drain mode?
-        # Yes => Is the drain grace period tag old? => Delete + Remove from host pool
+        # Yes => Is the drain grace period gtt 0?
+        #   Yes => Is the drain grace period tag old? => Delete + Remove from host pool
+        #   No => Keep in drain mode and wait until next run
         # NO => Set drain mode + Message users + Set tag
 
         $drainSessionHost = $false
@@ -50,22 +52,31 @@ function Remove-SHRSessionHost {
                 # Is the session host in drain mode?
                 Write-PSFMessage -Level Host -Message 'Session host {0} is in drain mode.' -StringValues $sessionHost.FQDN
 
-                if ($sessionHost.PendingDrainTimeStamp) {
-                    #Session host has a drain timestamp
-                    Write-PSFMessage -Level Host -Message 'Session Host {0} drain timestamp is {1}' -StringValues $sessionHost.FQDN, $sessionHost.PendingDrainTimeStamp
-                    $maxDrainGracePeriodDate = $sessionHost.PendingDrainTimeStamp.AddHours($DrainGracePeriodHours)
-                    Write-PSFMessage -Level Host -Message 'Session Host {0} can stay in grace period until {1}' -StringValues $sessionHost.FQDN, $maxDrainGracePeriodDate.ToUniversalTime().ToString('o')
-                    if ($maxDrainGracePeriodDate -lt (Get-Date)) {
-                        Write-PSFMessage -Level Host -Message 'Session Host {0} has exceeded the drain grace period.' -StringValues $sessionHost.FQDN
-                        $deleteSessionHost = $true
+                # Yes => Is the drain grace period gtt 0?
+                if ($DrainGracePeriodHours -gt 0) {
+                    # Yes => Is the drain grace period tag old? => Delete + Remove from host pool
+                    Write-PSFMessage -Level Host -Message 'Drain grace period is enabled. Checking drain timestamp for session host {0}.' -StringValues $sessionHost.FQDN
+                    if ($sessionHost.PendingDrainTimeStamp) {
+                        #Session host has a drain timestamp
+                        Write-PSFMessage -Level Host -Message 'Session Host {0} drain timestamp is {1}' -StringValues $sessionHost.FQDN, $sessionHost.PendingDrainTimeStamp
+                        $maxDrainGracePeriodDate = $sessionHost.PendingDrainTimeStamp.AddHours($DrainGracePeriodHours)
+                        Write-PSFMessage -Level Host -Message 'Session Host {0} can stay in grace period until {1}' -StringValues $sessionHost.FQDN, $maxDrainGracePeriodDate.ToUniversalTime().ToString('o')
+                        if ($maxDrainGracePeriodDate -lt (Get-Date)) {
+                            Write-PSFMessage -Level Host -Message 'Session Host {0} has exceeded the drain grace period.' -StringValues $sessionHost.FQDN
+                            $deleteSessionHost = $true
+                        }
+                        else {
+                            Write-PSFMessage -Level Host -Message 'Session Host {0} has not exceeded the drain grace period.' -StringValues $sessionHost.FQDN
+                        }
                     }
                     else {
-                        Write-PSFMessage -Level Host -Message 'Session Host {0} has not exceeded the drain grace period.' -StringValues $sessionHost.FQDN
+                        Write-PSFMessage -Level Host -Message 'Session Host {0} does not have a drain timestamp.' -StringValues $sessionHost.FQDN
+                        $drainSessionHost = $true
                     }
                 }
+                # No => Keep in drain mode and wait until next run
                 else {
-                    Write-PSFMessage -Level Host -Message 'Session Host {0} does not have a drain timestamp.' -StringValues $sessionHost.FQDN
-                    $drainSessionHost = $true
+                    Write-PSFMessage -Level Host -Message 'Drain grace period is disabled. Session host {0} will be deleted once all sessions are disconnected.' -StringValues $sessionHost.FQDN
                 }
             }
             else {
@@ -87,9 +98,10 @@ function Remove-SHRSessionHost {
                 Write-PSFMessage -Level Host -Message 'Setting scaling plan exclusion tag {0} to {1}.' -StringValues $TagScalingPlanExclusionTag, $true
                 $null = Update-AzTag -ResourceId $sessionHost.ResourceId -Tag @{$TagScalingPlanExclusionTag = $true } -Operation Merge
             }
-
-            Write-PSFMessage -Level Host -Message 'Notifying Users'
-            Send-SHRDrainNotification -SessionHostName ($sessionHost.FQDN)
+            if ($DrainGracePeriodHours -gt 0) {
+                Write-PSFMessage -Level Host -Message 'Notifying Users'
+                Send-SHRDrainNotification -SessionHostName ($sessionHost.FQDN)
+            }
         }
 
         if ($deleteSessionHost) {
