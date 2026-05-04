@@ -110,9 +110,11 @@ var varAppInsightsKey = EnableMonitoring ? [
 ] : []
 var varFunctionAppSettingsAndReplacementPlanSettings = union(varFunctionAppSettings, varAppInsightsKey, ReplacementPlanSettings)
 
-var varStorageAccountName = 'stavdrpfunc${uniqueString(FunctionAppName)}'
-var varLogAnalyticsWorkspaceName = '${FunctionAppName}-law'
-var varAppServicePlanName = '${FunctionAppName}-asp'
+var uniqueString = split(FunctionAppName, '-')[2]
+var varStorageAccountName = 'stavdshr${uniqueString}'
+var varLogAnalyticsWorkspaceName = 'log-avdshr-${uniqueString}'
+var varAppServicePlanName = 'asp-avdshr-${uniqueString}'
+var varApplicationInsightsName = 'appi-avdshr-${uniqueString}'
 //-------//
 
 //------ Resources ------//
@@ -154,7 +156,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
 
 // Deploy App Insights for App Service Plan
 resource appInsights 'Microsoft.Insights/components@2020-02-02' = if (EnableMonitoring) {
-  name: varAppServicePlanName
+  name: varApplicationInsightsName
   location: Location
   kind: 'web'
   properties: {

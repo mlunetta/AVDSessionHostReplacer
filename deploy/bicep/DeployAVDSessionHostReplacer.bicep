@@ -455,7 +455,7 @@ var varReplacementPlanSettings = [
 ]
 
 var varUniqueString = uniqueString(resourceGroup().id, HostPoolName)
-var varFunctionAppName = 'AVDSessionHostReplacer-${uniqueString(resourceGroup().id, HostPoolName)}'
+var varFunctionAppName = 'func-avdshr-${varUniqueString}'
 
 var varFunctionAppIdentity = UseUserAssignedManagedIdentity
   ? {
@@ -499,7 +499,7 @@ module deployKeyVault 'modules/deployKeyVault.bicep' = if (IdentityServiceProvid
   name: 'deployKeyVault'
   params: {
     Location: Location
-    KeyVaultName: 'kv-AVDSHR-${varUniqueString}'
+    KeyVaultName: 'kv-avdshr-${varUniqueString}'
     DomainJoinPassword: ADJoinUserPassword
     AdminPassword: LocalAdminPassword
   }
