@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.32.4.45862",
-      "templateHash": "9227116249458966949"
+      "version": "0.41.2.15936",
+      "templateHash": "3781440406729427715"
     }
   },
   "parameters": {
@@ -425,7 +425,7 @@
   "resources": [
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2022-09-01",
+      "apiVersion": "2025-04-01",
       "name": "deployFunctionApp",
       "properties": {
         "expressionEvaluationOptions": {
@@ -482,11 +482,11 @@
               },
               {
                 "name": "_SessionHostTemplate",
-                "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deployStandardSessionHostTemplate'), '2022-09-01').outputs.TemplateSpecResourceId.value]"
+                "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deployStandardSessionHostTemplate'), '2025-04-01').outputs.TemplateSpecResourceId.value]"
               },
               {
                 "name": "_SessionHostParameters",
-                "value": "[string(if(parameters('UseStandardTemplate'), createObject('Location', parameters('SessionHostsRegion'), 'AvailabilityZones', parameters('AvailabilityZones'), 'VMSize', parameters('SessionHostSize'), 'AcceleratedNetworking', parameters('AcceleratedNetworking'), 'DiskType', parameters('SessionHostDiskType'), 'ImageReference', variables('varImageReference'), 'SecurityProfile', variables('varSecurityProfile'), 'SubnetId', parameters('SubnetId'), 'DomainJoinObject', variables('varDomainJoinObject'), 'DomainJoinPassword', if(equals(parameters('IdentityServiceProvider'), 'EntraID'), null(), createObject('reference', createObject('keyVault', createObject('id', reference(resourceId('Microsoft.Resources/deployments', 'deployKeyVault'), '2022-09-01').outputs.keyVaultId.value), 'secretName', 'DomainJoinPassword'))), 'AdminUsername', parameters('LocalAdminUsername'), 'AdminPassword', if(equals(parameters('IdentityServiceProvider'), 'EntraID'), parameters('LocalAdminPassword'), createObject('reference', createObject('keyVault', createObject('id', reference(resourceId('Microsoft.Resources/deployments', 'deployKeyVault'), '2022-09-01').outputs.keyVaultId.value), 'secretName', 'AdminPassword')))), 'VMNamePrefixLength', add(length(parameters('SessionHostNamePrefix')), length(parameters('SessionHostNameSeparator'))), 'tags', createObject()), parameters('CustomTemplateSpecParameters')))]"
+                "value": "[string(if(parameters('UseStandardTemplate'), createObject('Location', parameters('SessionHostsRegion'), 'AvailabilityZones', parameters('AvailabilityZones'), 'VMSize', parameters('SessionHostSize'), 'AcceleratedNetworking', parameters('AcceleratedNetworking'), 'DiskType', parameters('SessionHostDiskType'), 'ImageReference', variables('varImageReference'), 'SecurityProfile', variables('varSecurityProfile'), 'SubnetId', parameters('SubnetId'), 'DomainJoinObject', variables('varDomainJoinObject'), 'DomainJoinPassword', if(equals(parameters('IdentityServiceProvider'), 'EntraID'), null(), createObject('reference', createObject('keyVault', createObject('id', reference(resourceId('Microsoft.Resources/deployments', 'deployKeyVault'), '2025-04-01').outputs.keyVaultId.value, 'secretName', 'DomainJoinPassword')))), 'AdminUsername', parameters('LocalAdminUsername'), 'AdminPassword', if(equals(parameters('IdentityServiceProvider'), 'EntraID'), parameters('LocalAdminPassword'), if(equals(parameters('IdentityServiceProvider'), 'EntraID'), null(), createObject('reference', createObject('keyVault', createObject('id', reference(resourceId('Microsoft.Resources/deployments', 'deployKeyVault'), '2025-04-01').outputs.keyVaultId.value, 'secretName', 'AdminPassword'))))), 'VMNamePrefixLength', add(length(parameters('SessionHostNamePrefix')), length(parameters('SessionHostNameSeparator'))), 'tags', createObject()), parameters('CustomTemplateSpecParameters')))]"
               },
               {
                 "name": "_SubscriptionId",
@@ -584,8 +584,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.32.4.45862",
-              "templateHash": "7216517577516201643"
+              "version": "0.41.2.15936",
+              "templateHash": "622836364660167560"
             }
           },
           "parameters": {
@@ -772,7 +772,7 @@
     {
       "condition": "[not(equals(parameters('IdentityServiceProvider'), 'EntraID'))]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2022-09-01",
+      "apiVersion": "2025-04-01",
       "name": "deployKeyVault",
       "properties": {
         "expressionEvaluationOptions": {
@@ -799,8 +799,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.32.4.45862",
-              "templateHash": "3335929600449219809"
+              "version": "0.41.2.15936",
+              "templateHash": "14744796649569107015"
             }
           },
           "parameters": {
@@ -868,7 +868,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2022-09-01",
+      "apiVersion": "2025-04-01",
       "name": "deployStandardSessionHostTemplate",
       "properties": {
         "expressionEvaluationOptions": {
@@ -889,8 +889,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.32.4.45862",
-              "templateHash": "5566873887281875963"
+              "version": "0.41.2.15936",
+              "templateHash": "14955645364604267835"
             }
           },
           "parameters": {
@@ -1355,7 +1355,7 @@
     {
       "condition": "[not(parameters('UseUserAssignedManagedIdentity'))]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2022-09-01",
+      "apiVersion": "2025-04-01",
       "name": "[format('RBAC-vdiVMContributor-{0}', parameters('TimeStamp'))]",
       "subscriptionId": "[subscription().subscriptionId]",
       "location": "[resourceGroup().location]",
@@ -1366,7 +1366,7 @@
         "mode": "Incremental",
         "parameters": {
           "PrinicpalId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deployFunctionApp'), '2022-09-01').outputs.functionAppPrincipalId.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deployFunctionApp'), '2025-04-01').outputs.functionAppPrincipalId.value]"
           },
           "RoleDefinitionId": {
             "value": "a959dbd1-f747-45e3-8ba6-dd80f235f97c"
@@ -1381,8 +1381,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.32.4.45862",
-              "templateHash": "10102527435631023526"
+              "version": "0.41.2.15936",
+              "templateHash": "18435544943446317056"
             }
           },
           "parameters": {
@@ -1416,7 +1416,7 @@
     {
       "condition": "[not(parameters('UseUserAssignedManagedIdentity'))]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2022-09-01",
+      "apiVersion": "2025-04-01",
       "name": "[format('RBAC-TemplateSpecReader-{0}', parameters('TimeStamp'))]",
       "subscriptionId": "[subscription().subscriptionId]",
       "location": "[resourceGroup().location]",
@@ -1427,13 +1427,13 @@
         "mode": "Incremental",
         "parameters": {
           "PrinicpalId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deployFunctionApp'), '2022-09-01').outputs.functionAppPrincipalId.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deployFunctionApp'), '2025-04-01').outputs.functionAppPrincipalId.value]"
           },
           "RoleDefinitionId": {
             "value": "392ae280-861d-42bd-9ea5-08ee6d83b80e"
           },
           "Scope": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deployStandardSessionHostTemplate'), '2022-09-01').outputs.TemplateSpecResourceId.value]"
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deployStandardSessionHostTemplate'), '2025-04-01').outputs.TemplateSpecResourceId.value]"
           }
         },
         "template": {
@@ -1442,8 +1442,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.32.4.45862",
-              "templateHash": "10102527435631023526"
+              "version": "0.41.2.15936",
+              "templateHash": "18435544943446317056"
             }
           },
           "parameters": {

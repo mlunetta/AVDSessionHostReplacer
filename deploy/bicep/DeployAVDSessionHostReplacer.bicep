@@ -276,8 +276,8 @@ var varDomainJoinPasswordReference = IdentityServiceProvider == 'EntraID'
       reference: {
         keyVault: {
           id: deployKeyVault.outputs.keyVaultId
+          secretName: 'DomainJoinPassword'
         }
-        secretName: 'DomainJoinPassword'
       }
     }
 
@@ -287,8 +287,8 @@ var varAdminPasswordReference = IdentityServiceProvider == 'EntraID'
       reference: {
         keyVault: {
           id: deployKeyVault.outputs.keyVaultId
+          secretName: 'AdminPassword'
         }
-        secretName: 'AdminPassword'
       }
     }
 
