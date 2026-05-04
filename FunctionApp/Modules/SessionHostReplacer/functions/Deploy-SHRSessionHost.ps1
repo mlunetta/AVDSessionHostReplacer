@@ -52,7 +52,7 @@ function Deploy-SHRSessionHost {
     # Calculate Session Host Names
     Write-PSFMessage -Level Host -Message "Existing session host VM names: {0}" -StringValues ($ExistingSessionHostVMNames -join ',')
     [array] $sessionHostNames = for ($i = 0; $i -lt $NewSessionHostsCount; $i++) {
-        $vmNumber = 1
+        $vmNumber = 0
         While (("$SessionHostNamePrefix$SessionHostNameSeparator{0:d$SessionHostInstanceNumberPadding}" -f $vmNumber) -in $ExistingSessionHostVMNames) {
             $vmNumber++
         }
