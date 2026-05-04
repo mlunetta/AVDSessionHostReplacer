@@ -39,10 +39,10 @@
 								{
 									"name": "HostPoolResourceGroupInfoBox",
 									"type": "Microsoft.Common.InfoBox",
-									"visible": "[not(empty(steps('basics').HostPoolSettingsSection.HostPoolSelector.id))]",
+									"visible": "[not(empty(steps('basics').HostPoolSettingsSection.HostPoolSelector.resourceGroup))]",
 									"options": {
 										"icon": "Info",
-										"text": "[concat('Host Pool Resource Group: ', split(steps('basics').HostPoolSettingsSection.HostPoolSelector.id, '/')[4])]"
+										"text": "[concat('Host Pool Resource Group: ', steps('basics').HostPoolSettingsSection.HostPoolSelector.resourceGroup)]"
 									}
 								},
 								{
@@ -413,6 +413,7 @@
 									"name": "dropDownMarketPlaceImage",
 									"type": "Microsoft.Common.DropDown",
 									"label": "Select a Marketplace Image",
+									"visible": "[steps('')]",
 									"placeholder": "",
 									"defaultValue": "Windows 11 Enterprise 23h2 multi-session + Microsoft 365 Apps",
 									"toolTip": "Marketplace images are updated on monthly basis. The Session Host Replacer will replace the session hosts when a new image is available.",
@@ -862,7 +863,7 @@
 			"resourceGroupId": "[steps('basics').resourceScope.resourceGroup.id]",
 			"location": "[steps('basics').resourceScope.location.name]",
 			"parameters": {
-				"HostPoolResourceGroupName": "[split(steps('basics').HostPoolSettingsSection.HostPoolSelector.id, '/')[4]]",
+				"HostPoolResourceGroupName": "[steps('basics').HostPoolSettingsSection.HostPoolSelector.resourceGroup]",
 				"HostPoolName": "[steps('basics').HostPoolSettingsSection.HostPoolSelector.name]",
 				"SessionHostNamePrefix": "[steps('basics').HostPoolSettingsSection.sessionHostNamePrefix]",
 				"UseUserAssignedManagedIdentity": "[if(steps('basics').IdentitySection.UseUserAssignedManagedIdentity, true, false)]",
