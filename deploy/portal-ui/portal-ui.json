@@ -787,7 +787,7 @@
 							"max": 4,
 							"label": "Session Host VM Number Padding",
 							"toolTip": "The number of digits to use for the instance number in the session host name. For example, if the prefix is 'avdsh' and the padding is 2, the session hosts will be named avdsh01, avdsh02, etc. Set as '0' to disable padding.",
-							"defaultValue": 2,
+							"defaultValue": 1,
 							"showStepMarkers": true,
 							"constraints": {
 								"required": false
