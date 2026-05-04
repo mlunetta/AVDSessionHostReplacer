@@ -91,8 +91,8 @@ param VMNamesTemplateParameterName string = 'VMNames'
 param CustomTemplateSpecParameters string = '{}' // This is a JSON string
 
 //Required Parameters
-@description('Required: No | Name of the resource group containing the Azure Virtual Desktop Host Pool. | Default: The resource group of the Function App.')
-param HostPoolResourceGroupName string = resourceGroup().name
+@description('Required: Yes | Name of the resource group containing the Azure Virtual Desktop Host Pool.')
+param HostPoolResourceGroupName string
 
 @description('Required: Yes | Name of the Azure Virtual Desktop Host Pool.')
 param HostPoolName string

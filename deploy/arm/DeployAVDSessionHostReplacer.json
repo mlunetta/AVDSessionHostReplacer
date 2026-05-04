@@ -181,9 +181,8 @@
     },
     "HostPoolResourceGroupName": {
       "type": "string",
-      "defaultValue": "[resourceGroup().name]",
       "metadata": {
-        "description": "Required: No | Name of the resource group containing the Azure Virtual Desktop Host Pool. | Default: The resource group of the Function App."
+        "description": "Required: Yes | Name of the resource group containing the Azure Virtual Desktop Host Pool."
       }
     },
     "HostPoolName": {
