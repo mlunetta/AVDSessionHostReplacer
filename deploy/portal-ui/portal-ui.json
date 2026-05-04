@@ -37,13 +37,12 @@
 									}
 								},
 								{
-									"name": "HostPoolResourceGroupNameField",
-									"type": "Microsoft.Common.TextBox",
-									"label": "Host Pool Resource Group Name",
+									"name": "HostPoolResourceGroupInfoBox",
+									"type": "Microsoft.Common.InfoBox",
 									"visible": "[not(empty(steps('basics').HostPoolSettingsSection.HostPoolSelector.resourceGroup))]",
-									"value": "[steps('basics').HostPoolSettingsSection.HostPoolSelector.resourceGroup]",
-									"constraints": {
-										"required": true
+									"options": {
+										"icon": "Info",
+										"text": "[concat('Host Pool Resource Group: ', steps('basics').HostPoolSettingsSection.HostPoolSelector.resourceGroup)]"
 									}
 								},
 								{
@@ -864,7 +863,7 @@
 			"resourceGroupId": "[steps('basics').resourceScope.resourceGroup.id]",
 			"location": "[steps('basics').resourceScope.location.name]",
 			"parameters": {
-				"HostPoolResourceGroupName": "[steps('basics').HostPoolSettingsSection.HostPoolResourceGroupNameField]",
+				"HostPoolResourceGroupName": "[steps('basics').HostPoolSettingsSection.HostPoolSelector.resourceGroup]",
 				"HostPoolName": "[steps('basics').HostPoolSettingsSection.HostPoolSelector.name]",
 				"SessionHostNamePrefix": "[steps('basics').HostPoolSettingsSection.sessionHostNamePrefix]",
 				"UseUserAssignedManagedIdentity": "[if(steps('basics').IdentitySection.UseUserAssignedManagedIdentity, true, false)]",

@@ -181,6 +181,7 @@
     },
     "HostPoolResourceGroupName": {
       "type": "string",
+      "defaultValue": "",
       "metadata": {
         "description": "Required: Yes | Name of the resource group containing the Azure Virtual Desktop Host Pool."
       }
