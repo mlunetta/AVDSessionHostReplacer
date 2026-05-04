@@ -55,11 +55,11 @@ $TemplateParameters = @{
     # Only used when IdentityServiceProvider is ActiveDirectory or EntraDS
     #ADDomainName = 'contoso.com'
     #ADDomainJoinUserName = 'DomainJoin'
-    #ADJoinUserPassword = 'P@ssw0rd' # We will store this password in a key vault
+    #ADJoinUserPassword = '' # We will store this password in a key vault
     #ADOUPath = '' # OU DN where the session hosts will be joined
 
-    LocalAdminUserName                           = 'AVDAdmin' # The password is randomly generated. Please use LAPS or reset from Azure Portal.
-
+    LocalAdminUserName                           = 'AVDAdmin'
+    AdminPasswrod                                = '<Password of the local admin user>        
 
     ## Optional Parameters ##
     TagIncludeInAutomation                       = 'IncludeInAutoReplace'
