@@ -10,7 +10,7 @@ param SubnetID string
 param AdminUsername string
 
 @secure()
-param AdminPassword string = newGuid()
+param AdminPassword string
 
 param AcceleratedNetworking bool
 

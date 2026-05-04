@@ -160,6 +160,10 @@
       "type": "string",
       "defaultValue": ""
     },
+    "LocalAdminPassword": {
+      "type": "securestring",
+      "defaultValue": ""
+    },
     "CustomTemplateSpecResourceId": {
       "type": "string",
       "defaultValue": ""
@@ -482,7 +486,7 @@
               },
               {
                 "name": "_SessionHostParameters",
-                "value": "[string(if(parameters('UseStandardTemplate'), createObject('Location', parameters('SessionHostsRegion'), 'AvailabilityZones', parameters('AvailabilityZones'), 'VMSize', parameters('SessionHostSize'), 'AcceleratedNetworking', parameters('AcceleratedNetworking'), 'DiskType', parameters('SessionHostDiskType'), 'ImageReference', variables('varImageReference'), 'SecurityProfile', variables('varSecurityProfile'), 'SubnetId', parameters('SubnetId'), 'DomainJoinObject', variables('varDomainJoinObject'), 'DomainJoinPassword', if(equals(parameters('IdentityServiceProvider'), 'EntraID'), null(), createObject('reference', createObject('keyVault', createObject('id', reference(resourceId('Microsoft.Resources/deployments', 'deployKeyVault'), '2022-09-01').outputs.keyVaultId.value), 'secretName', 'DomainJoinPassword'))), 'AdminUsername', parameters('LocalAdminUsername'), 'VMNamePrefixLength', add(length(parameters('SessionHostNamePrefix')), length(parameters('SessionHostNameSeparator'))), 'tags', createObject()), parameters('CustomTemplateSpecParameters')))]"
+                "value": "[string(if(parameters('UseStandardTemplate'), createObject('Location', parameters('SessionHostsRegion'), 'AvailabilityZones', parameters('AvailabilityZones'), 'VMSize', parameters('SessionHostSize'), 'AcceleratedNetworking', parameters('AcceleratedNetworking'), 'DiskType', parameters('SessionHostDiskType'), 'ImageReference', variables('varImageReference'), 'SecurityProfile', variables('varSecurityProfile'), 'SubnetId', parameters('SubnetId'), 'DomainJoinObject', variables('varDomainJoinObject'), 'DomainJoinPassword', if(equals(parameters('IdentityServiceProvider'), 'EntraID'), null(), createObject('reference', createObject('keyVault', createObject('id', reference(resourceId('Microsoft.Resources/deployments', 'deployKeyVault'), '2022-09-01').outputs.keyVaultId.value), 'secretName', 'DomainJoinPassword'))), 'AdminUsername', parameters('LocalAdminUsername'), 'AdminPassword', if(equals(parameters('IdentityServiceProvider'), 'EntraID'), parameters('LocalAdminPassword'), createObject('reference', createObject('keyVault', createObject('id', reference(resourceId('Microsoft.Resources/deployments', 'deployKeyVault'), '2022-09-01').outputs.keyVaultId.value), 'secretName', 'AdminPassword')))), 'VMNamePrefixLength', add(length(parameters('SessionHostNamePrefix')), length(parameters('SessionHostNameSeparator'))), 'tags', createObject()), parameters('CustomTemplateSpecParameters')))]"
               },
               {
                 "name": "_SubscriptionId",
@@ -784,6 +788,9 @@
           },
           "DomainJoinPassword": {
             "value": "[parameters('ADJoinUserPassword')]"
+          },
+          "AdminPassword": {
+            "value": "[parameters('LocalAdminPassword')]"
           }
         },
         "template": {
@@ -806,6 +813,9 @@
             },
             "DomainJoinPassword": {
               "type": "securestring"
+            },
+            "AdminPassword": {
+              "type": "securestring"
             }
           },
           "resources": [
@@ -815,6 +825,17 @@
               "name": "[format('{0}/{1}', parameters('KeyVaultName'), 'DomainJoinPassword')]",
               "properties": {
                 "value": "[parameters('DomainJoinPassword')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2023-07-01",
+              "name": "[format('{0}/{1}', parameters('KeyVaultName'), 'AdminPassword')]",
+              "properties": {
+                "value": "[parameters('AdminPassword')]"
               },
               "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('KeyVaultName'))]"
@@ -916,6 +937,9 @@
                 "AdminUsername": {
                   "type": "string"
                 },
+                "AdminPassword": {
+                  "type": "securestring"
+                },
                 "AcceleratedNetworking": {
                   "type": "bool"
                 },
@@ -972,6 +996,9 @@
                       },
                       "AdminUsername": {
                         "value": "[[parameters('AdminUsername')]"
+                      },
+                      "AdminPassword": {
+                        "value": "[[parameters('AdminPassword')]"
                       },
                       "HostPoolName": {
                         "value": "[[parameters('HostPoolName')]"
@@ -1057,8 +1084,7 @@
                           "type": "string"
                         },
                         "AdminPassword": {
-                          "type": "securestring",
-                          "defaultValue": "[[newGuid()]"
+                          "type": "securestring"
                         },
                         "AcceleratedNetworking": {
                           "type": "bool"

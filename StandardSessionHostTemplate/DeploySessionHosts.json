@@ -32,6 +32,9 @@
     "AdminUsername": {
       "type": "string"
     },
+    "AdminPassword": {
+      "type": "securestring"
+    },
     "AcceleratedNetworking": {
       "type": "bool"
     },
@@ -88,6 +91,9 @@
           },
           "AdminUsername": {
             "value": "[parameters('AdminUsername')]"
+          },
+          "AdminPassword": {
+            "value": "[parameters('AdminPassword')]"
           },
           "HostPoolName": {
             "value": "[parameters('HostPoolName')]"
@@ -173,8 +179,7 @@
               "type": "string"
             },
             "AdminPassword": {
-              "type": "securestring",
-              "defaultValue": "[newGuid()]"
+              "type": "securestring"
             },
             "AcceleratedNetworking": {
               "type": "bool"

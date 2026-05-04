@@ -667,13 +667,30 @@
 							"type": "Microsoft.Common.TextBox",
 							"label": "Local Administrator Username",
 							"visible": "[steps('SessionHostsTemplate').SessionHostTemplateTypeSection.UseStandardTemplate]",
-							"toolTip": "Provide username for session host local admin account. Administrator can't be used as username, it is reserved by the system. The password is randomly generated at deployment time.",
+							"toolTip": "Provide username for session host local admin account. Administrator can't be used as username, it is reserved by the system.",
 							"placeholder": "Example: avdadmin",
 							"defaultValue": "",
 							"constraints": {
 								"regex": "^(?!.*[aA]dministrator).*$",
 								"validationMessage": "This username can't be used, it is a reserved word.",
 								"required": true
+							}
+						},
+						{
+							"name": "LocalAdminPassword",
+							"type": "Microsoft.Common.PasswordBox",
+							"label": {
+								"password": "Local Administrator Password"
+							},
+							"visible": "[steps('SessionHostsTemplate').SessionHostTemplateTypeSection.UseStandardTemplate]",
+							"toolTip": "Provide password for the session host local admin account. This value is stored as AdminPassword in a new Azure Key Vault and referenced during host deployment.",
+							"constraints": {
+								"required": true,
+								"regex": "^(?=.{12,123}$)(?:(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)|(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9])|(?=.*[a-z])(?=.*\\d)(?=.*[^A-Za-z0-9])|(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9])).*$",
+								"validationMessage": "Password must be 12-123 characters and include at least 3 of these 4 categories: uppercase letter, lowercase letter, number, special character."
+							},
+							"options": {
+								"hideConfirmation": false
 							}
 						}
 					]
@@ -866,6 +883,7 @@
 				"ADJoinUserPassword": "[steps('SessionHostsTemplate').DomainJoinSection.ADJoinUserPassword]",
 				"ADOUPath": "[steps('SessionHostsTemplate').DomainJoinSection.ADOUPath]",
 				"LocalAdminUsername": "[steps('SessionHostsTemplate').LocalAdminUsername]",
+				"LocalAdminPassword": "[steps('SessionHostsTemplate').LocalAdminPassword]",
 				"CustomTemplateSpecResourceId": "[if(not(steps('SessionHostsTemplate').SessionHostTemplateTypeSection.UseStandardTemplate), steps('SessionHostsTemplate').CustomTemplateSection.CustomTemplateSpecSelector.id, '')]",
 				"VMNamesTemplateParameterName": "[if(not(steps('SessionHostsTemplate').SessionHostTemplateTypeSection.UseStandardTemplate), steps('SessionHostsTemplate').CustomTemplateSection.CustomTemplateVMNamesParameterName, 'VMNames')]",
 				"CustomTemplateSpecParameters": "[if(not(steps('SessionHostsTemplate').SessionHostTemplateTypeSection.UseStandardTemplate), steps('SessionHostsTemplate').CustomTemplateSection.CustomTemplateParameters, '{}')]",

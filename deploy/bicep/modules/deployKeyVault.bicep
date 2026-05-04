@@ -5,6 +5,9 @@ param KeyVaultName string
 @secure()
 param DomainJoinPassword string
 
+@secure()
+param AdminPassword string
+
 //---- Varibalbes ----//
 
 //---- Resources ----//
@@ -24,6 +27,13 @@ resource deployKeyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
     name: 'DomainJoinPassword'
     properties: {
       value: DomainJoinPassword
+    }
+  }
+
+  resource secretAdminPassword 'secrets@2023-07-01' = {
+    name: 'AdminPassword'
+    properties: {
+      value: AdminPassword
     }
   }
 }

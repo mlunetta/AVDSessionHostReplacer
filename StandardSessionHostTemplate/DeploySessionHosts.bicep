@@ -11,6 +11,8 @@ param VMSize string
 param SubnetID string
 
 param AdminUsername string
+@secure()
+param AdminPassword string
 
 param AcceleratedNetworking bool
 param DiskType string
@@ -37,6 +39,7 @@ module deploySessionHosts 'modules/AVDStandardSessionHost.bicep' = [for vm in VM
   params: {
     AcceleratedNetworking: AcceleratedNetworking
     AdminUsername: AdminUsername
+    AdminPassword: AdminPassword
     HostPoolName: HostPoolName
     HostPoolToken:  HostPoolToken
     ImageReference: ImageReference

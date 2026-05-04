@@ -79,6 +79,8 @@ param ADDomainJoinUserName string = ''
 param ADJoinUserPassword string = ''
 param ADOUPath string = ''
 param LocalAdminUsername string = ''
+@secure()
+param LocalAdminPassword string = ''
 
 // Custom Session Host Template
 param CustomTemplateSpecResourceId string = ''
@@ -278,6 +280,20 @@ var varDomainJoinPasswordReference = IdentityServiceProvider == 'EntraID'
         secretName: 'DomainJoinPassword'
       }
     }
+
+var varAdminPasswordReference = IdentityServiceProvider == 'EntraID'
+  ? null
+  : {
+      reference: {
+        keyVault: {
+          id: deployKeyVault.outputs.keyVaultId
+        }
+        secretName: 'AdminPassword'
+      }
+    }
+
+var varAdminPassword = IdentityServiceProvider == 'EntraID' ? LocalAdminPassword : varAdminPasswordReference
+
 var varSessionHostTemplateParameters = UseStandardTemplate
   ? {
       Location: SessionHostsRegion
@@ -291,6 +307,7 @@ var varSessionHostTemplateParameters = UseStandardTemplate
       DomainJoinObject: varDomainJoinObject
       DomainJoinPassword: varDomainJoinPasswordReference
       AdminUsername: LocalAdminUsername
+      AdminPassword: varAdminPassword
       VMNamePrefixLength: length(SessionHostNamePrefix) + length(SessionHostNameSeparator) //This is used when deploying in multiple availability zones.
       tags: {}
     }
@@ -484,6 +501,7 @@ module deployKeyVault 'modules/deployKeyVault.bicep' = if (IdentityServiceProvid
     Location: Location
     KeyVaultName: 'kv-AVDSHR-${varUniqueString}'
     DomainJoinPassword: ADJoinUserPassword
+    AdminPassword: LocalAdminPassword
   }
 }
 module deployStandardSessionHostTemplate 'modules/deployStandardTemplateSpec.bicep' = {
