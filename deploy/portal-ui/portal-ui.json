@@ -854,7 +854,7 @@
 			"resourceGroupId": "[steps('basics').resourceScope.resourceGroup.id]",
 			"location": "[steps('basics').resourceScope.location.name]",
 			"parameters": {
-				"HostPoolResourceId": "[steps('basics').HostPoolSettingsSection.HostPoolSelector.id]",
+				"HostPoolId": "[steps('basics').HostPoolSettingsSection.HostPoolSelector.id]",
 				"HostPoolName": "[steps('basics').HostPoolSettingsSection.HostPoolSelector.name]",
 				"SessionHostNamePrefix": "[steps('basics').HostPoolSettingsSection.sessionHostNamePrefix]",
 				"UseUserAssignedManagedIdentity": "[if(steps('basics').IdentitySection.UseUserAssignedManagedIdentity, true, false)]",
