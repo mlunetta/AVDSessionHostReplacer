@@ -56,7 +56,7 @@ function Get-SHRHostPoolDecision {
         }
     }
 
-    [array] $sessionHostsToReplace = ($sessionHostsOldAge + $sessionHostsOldVersion) | Select-Object -Property * -Unique
+    [array] $sessionHostsToReplace = ($sessionHostsOldAge + $sessionHostsOldVersion) | Sort-Object -Property Session | Select-Object -Property * -Unique
     Write-PSFMessage -Level Host -Message "Found {0} session hosts to replace in total. {1}" -StringValues $sessionHostsToReplace.Count, ($sessionHostsToReplace.VMName -join ',')
 
     # Good Session Hosts
