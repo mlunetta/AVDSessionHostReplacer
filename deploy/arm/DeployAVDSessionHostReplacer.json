@@ -181,8 +181,15 @@
     },
     "HostPoolResourceGroupName": {
       "type": "string",
+      "defaultValue": "[resourceGroup().name]",
       "metadata": {
         "description": "Required: Yes | Name of the resource group containing the Azure Virtual Desktop Host Pool."
+      }
+    },
+    "HostPoolId": {
+      "type": "string",
+      "metadata": {
+        "description": "Required: No | Resource ID of the Azure Virtual Desktop Host Pool."
       }
     },
     "HostPoolName": {
@@ -419,7 +426,8 @@
     "varGraphEnvironmentName": "[variables('varGraphEnvironmentNames')[indexOf(variables('varAzureEnvironments'), environment().name)]]",
     "varUniqueString": "[uniqueString(resourceGroup().id, parameters('HostPoolName'))]",
     "varFunctionAppName": "[format('func-avdshr-{0}', uniqueString(resourceGroup().id, parameters('HostPoolName')))]",
-    "varFunctionAppIdentity": "[if(parameters('UseUserAssignedManagedIdentity'), createObject('type', 'UserAssigned', 'userAssignedIdentities', createObject(format('{0}', parameters('UserAssignedManagedIdentityResourceId')), createObject())), createObject('type', 'SystemAssigned'))]"
+    "varFunctionAppIdentity": "[if(parameters('UseUserAssignedManagedIdentity'), createObject('type', 'UserAssigned', 'userAssignedIdentities', createObject(format('{0}', parameters('UserAssignedManagedIdentityResourceId')), createObject())), createObject('type', 'SystemAssigned'))]",
+    "varHostPoolGroupName": "[if(empty(parameters('HostPoolId')), parameters('HostPoolResourceGroupName'), split(parameters('HostPoolId'), '/')[4])]"
   },
   "resources": [
     {
@@ -457,7 +465,7 @@
             "value": [
               {
                 "name": "_HostPoolResourceGroupName",
-                "value": "[parameters('HostPoolResourceGroupName')]"
+                "value": "[variables('varHostPoolGroupName')]"
               },
               {
                 "name": "_HostPoolName",
