@@ -45,7 +45,7 @@ var varVMNumber = int(
 var varAvailabilityZone = AvailabilityZones == [] ? [] : [ '${AvailabilityZones[varVMNumber % length(AvailabilityZones)]}' ]
 
 resource vNIC 'Microsoft.Network/networkInterfaces@2023-09-01' = {
-  name: '${VMName}-vNIC'
+  name: 'nic-${VMName}'
   location: Location
   properties: {
     ipConfigurations: [
@@ -79,14 +79,14 @@ resource VM 'Microsoft.Compute/virtualMachines@2023-09-01' = {
     }
     storageProfile: {
       osDisk: {
-        name: '${VMName}-OSDisk'
+        name: 'osdisk-${VMName}'
         createOption: 'FromImage'
         deleteOption: 'Delete'
         managedDisk: {
           storageAccountType: DiskType
         }
       }
-      ImageReference: ImageReference
+      imageReference: ImageReference
     }
     securityProfile: SecurityProfile
     diagnosticsProfile: {
