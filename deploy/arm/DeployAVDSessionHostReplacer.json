@@ -183,13 +183,14 @@
       "type": "string",
       "defaultValue": "[resourceGroup().name]",
       "metadata": {
-        "description": "Required: Yes | Name of the resource group containing the Azure Virtual Desktop Host Pool."
+        "description": "Required: No | Name of the resource group containing the Azure Virtual Desktop Host Pool. If HostPoolId is provided, the HostPoolResourceGroupName parameters will be ignored. | Default: Resource group of the deployment."
       }
     },
     "HostPoolId": {
       "type": "string",
+      "defaultValue": "",
       "metadata": {
-        "description": "Required: No | Resource ID of the Azure Virtual Desktop Host Pool."
+        "description": "Required: No | Resource ID of the Azure Virtual Desktop Host Pool. If HostPoolId is provided, the HostPoolResourceGroupName parameters will be ignored."
       }
     },
     "HostPoolName": {

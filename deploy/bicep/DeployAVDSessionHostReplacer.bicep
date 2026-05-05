@@ -91,8 +91,11 @@ param VMNamesTemplateParameterName string = 'VMNames'
 param CustomTemplateSpecParameters string = '{}' // This is a JSON string
 
 //Required Parameters
-@description('Required: Yes | Name of the resource group containing the Azure Virtual Desktop Host Pool.')
-param HostPoolResourceGroupName string
+@description('Required: No | Name of the resource group containing the Azure Virtual Desktop Host Pool. This parameter will be ignored if HostPoolId is provided. | Default: Resource group of the deployment.')
+param HostPoolResourceGroupName string = resourceGroup().name
+
+@description('Required: No | Resource ID of the Azure Virtual Desktop Host Pool. If HostPoolId is provided, the HostPoolResourceGroupName parameters will be ignored.')
+param HostPoolId string = ''
 
 @description('Required: Yes | Name of the Azure Virtual Desktop Host Pool.')
 param HostPoolName string
@@ -332,11 +335,12 @@ var varGraphEnvironmentNames = UseGovDodGraph
     ]
 var varGraphEnvironmentName = varGraphEnvironmentNames[indexOf(varAzureEnvironments, environment().name)]
 
+var varHostPoolGroupName = empty(HostPoolId) ? HostPoolResourceGroupName : split(HostPoolId, '/')[4]
 var varReplacementPlanSettings = [
   // Required Parameters //
   {
     name: '_HostPoolResourceGroupName'
-    value: HostPoolResourceGroupName
+    value: varHostPoolGroupName
   }
   {
     name: '_HostPoolName'
