@@ -854,7 +854,7 @@
 			"resourceGroupId": "[steps('basics').resourceScope.resourceGroup.id]",
 			"location": "[steps('basics').resourceScope.location.name]",
 			"parameters": {
-				"HostPoolResourceGroupName": "[split(split(steps('basics').HostPoolSettingsSection.HostPoolSelector.id, '/resourceGroups/')[1], '/')[0]]",
+				"HostPoolResourceGroupName": "[if(or(empty(steps('basics').HostPoolSettingsSection.HostPoolSelector), empty(steps('basics').HostPoolSettingsSection.HostPoolSelector.id)), '', split(split(steps('basics').HostPoolSettingsSection.HostPoolSelector.id, '/resourceGroups/')[1], '/')[0])]",
 				"HostPoolName": "[steps('basics').HostPoolSettingsSection.HostPoolSelector.name]",
 				"SessionHostNamePrefix": "[steps('basics').HostPoolSettingsSection.sessionHostNamePrefix]",
 				"UseUserAssignedManagedIdentity": "[if(steps('basics').IdentitySection.UseUserAssignedManagedIdentity, true, false)]",
