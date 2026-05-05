@@ -667,30 +667,13 @@
 							"type": "Microsoft.Common.TextBox",
 							"label": "Local Administrator Username",
 							"visible": "[steps('SessionHostsTemplate').SessionHostTemplateTypeSection.UseStandardTemplate]",
-							"toolTip": "Provide username for session host local admin account. Administrator can't be used as username, it is reserved by the system.",
+							"toolTip": "Provide username for session host local admin account. Administrator can't be used as username, it is reserved by the system. The password is randomly generated at deployment time.",
 							"placeholder": "Example: avdadmin",
 							"defaultValue": "",
 							"constraints": {
 								"regex": "^(?!.*[aA]dministrator).*$",
 								"validationMessage": "This username can't be used, it is a reserved word.",
 								"required": true
-							}
-						},
-						{
-							"name": "LocalAdminPassword",
-							"type": "Microsoft.Common.PasswordBox",
-							"label": {
-								"password": "Local Administrator Password"
-							},
-							"visible": "[steps('SessionHostsTemplate').SessionHostTemplateTypeSection.UseStandardTemplate]",
-							"toolTip": "Provide password for the session host local admin account. This value is stored as AdminPassword in a new Azure Key Vault and referenced during host deployment.",
-							"constraints": {
-								"required": true,
-								"regex": "^(?=.{12,123}$)(?:(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)|(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9])|(?=.*[a-z])(?=.*\\d)(?=.*[^A-Za-z0-9])|(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9])).*$",
-								"validationMessage": "Password must be 12-123 characters and include at least 3 of these 4 categories: uppercase letter, lowercase letter, number, special character."
-							},
-							"options": {
-								"hideConfirmation": false
 							}
 						}
 					]
@@ -743,7 +726,7 @@
 							"name": "_TargetVMAgeDays",
 							"type": "Microsoft.Common.TextBox",
 							"label": "Target VM Age (Days)",
-							"toolTip": "The maximum age of a VM in days before it is replaced. This is compared to the value of the Deploy Timestamp Tag. Set as '0' to disable age based replacement and only replace on new image version if that option is enabled.",
+							"toolTip": "The maximum age of a VM in days before it is replaced. This is compared to the value of the Deploy Timestamp Tag.",
 							"defaultValue": 45,
 							"constraints": {
 								"required": false
@@ -753,7 +736,7 @@
 							"name": "_DrainGracePeriodHours",
 							"type": "Microsoft.Common.TextBox",
 							"label": "Drain Grace Period (Hours)",
-							"toolTip": "The number of hours to wait after marking a VM for drain before deleting it. This is to allow users to finish their sessions before the VM is deleted. Set as '0' to disable grace period and wait until all sessions are disconnected before deleting the VM.",
+							"toolTip": "The number of hours to wait after marking a VM for drain before deleting it. This is to allow users to finish their sessions before the VM is deleted.",
 							"defaultValue": 24,
 							"constraints": {
 								"required": false
@@ -786,8 +769,7 @@
 							"min": 1,
 							"max": 4,
 							"label": "Session Host VM Number Padding",
-							"toolTip": "The number of digits to use for the instance number in the session host name. For example, if the prefix is 'avdsh' and the padding is 2, the session hosts will be named avdsh01, avdsh02, etc. Set as '0' to disable padding.",
-							"defaultValue": 1,
+							"defaultValue": 2,
 							"showStepMarkers": true,
 							"constraints": {
 								"required": false
@@ -854,7 +836,7 @@
 			"resourceGroupId": "[steps('basics').resourceScope.resourceGroup.id]",
 			"location": "[steps('basics').resourceScope.location.name]",
 			"parameters": {
-				"HostPoolResourceGroupName": "[split(split(steps('basics').HostPoolSettingsSection.HostPoolSelector.id, '/resourceGroups/')[1], '/')[0]]",
+				"HostPoolResourceGroupName": "[steps('basics').HostPoolSettingsSection.HostPoolSelector.resourceGroup]",
 				"HostPoolName": "[steps('basics').HostPoolSettingsSection.HostPoolSelector.name]",
 				"SessionHostNamePrefix": "[steps('basics').HostPoolSettingsSection.sessionHostNamePrefix]",
 				"UseUserAssignedManagedIdentity": "[if(steps('basics').IdentitySection.UseUserAssignedManagedIdentity, true, false)]",
@@ -884,7 +866,6 @@
 				"ADJoinUserPassword": "[steps('SessionHostsTemplate').DomainJoinSection.ADJoinUserPassword]",
 				"ADOUPath": "[steps('SessionHostsTemplate').DomainJoinSection.ADOUPath]",
 				"LocalAdminUsername": "[steps('SessionHostsTemplate').LocalAdminUsername]",
-				"LocalAdminPassword": "[steps('SessionHostsTemplate').LocalAdminPassword]",
 				"CustomTemplateSpecResourceId": "[if(not(steps('SessionHostsTemplate').SessionHostTemplateTypeSection.UseStandardTemplate), steps('SessionHostsTemplate').CustomTemplateSection.CustomTemplateSpecSelector.id, '')]",
 				"VMNamesTemplateParameterName": "[if(not(steps('SessionHostsTemplate').SessionHostTemplateTypeSection.UseStandardTemplate), steps('SessionHostsTemplate').CustomTemplateSection.CustomTemplateVMNamesParameterName, 'VMNames')]",
 				"CustomTemplateSpecParameters": "[if(not(steps('SessionHostsTemplate').SessionHostTemplateTypeSection.UseStandardTemplate), steps('SessionHostsTemplate').CustomTemplateSection.CustomTemplateParameters, '{}')]",
