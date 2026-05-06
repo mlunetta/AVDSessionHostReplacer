@@ -109,7 +109,7 @@ Logs:
 
 Result:
   → No new deployment can start yet because the pool is already at target + buffer (7 hosts)
-  → Delete SH-001 and SH-002 if no users are connected (or after grace period)
+  → Deletion is prioritized for hosts with no active sessions, so SH-001 and SH-002 are removed first if they are already empty; otherwise they stay in drain mode until the grace period expires
 ```
 
 **Session Hosts Status After Execution**:
@@ -195,7 +195,7 @@ Logs:
 
 Result:
   → No new deployment can start yet because the pool is again at target + buffer
-  → Delete SH-003 and SH-004 when safe to do so
+  → Deletion is prioritized for hosts with no active sessions, so SH-003 and SH-004 are removed first if they are already empty; otherwise they stay in drain mode until the grace period expires
 ```
 
 **Session Hosts Status After Execution**:
@@ -328,13 +328,15 @@ Result: Fully updated! ✅
 
 2. **Deploy First, Remove Later**: New hosts with the updated image are deployed before old hosts are removed, ensuring no gap in capacity.
 
-3. **Grace Period**: Old hosts are placed in drain mode and given a grace period to complete user sessions before deletion.
+3. **Removal Priority**: Session hosts pending deletion are processed in session-count order, so hosts with no active sessions are the first candidates to be removed.
 
-4. **Delay Safety**: The `ReplaceSessionHostOnNewImageVersionDelayDays` parameter provides a safety window to ensure the new image is stable before rolling out to all hosts.
+4. **Grace Period**: If a selected host still has active sessions, it is placed in drain mode and given a grace period to let sessions end before deletion.
 
-5. **Naming Behavior**: New VMs use the lowest available numbered name for the configured prefix, so numbers can be reused after old hosts are deleted. During a rolling replacement you can temporarily see a mix such as `SH-006`, `SH-007`, then later `SH-001`, `SH-002`, and `SH-003`.
+5. **Delay Safety**: The `ReplaceSessionHostOnNewImageVersionDelayDays` parameter provides a safety window to ensure the new image is stable before rolling out to all hosts.
 
-6. **Automatic Progression**: With the timer running every hour, the system automatically progresses through each batch without manual intervention.
+6. **Naming Behavior**: New VMs use the lowest available numbered name for the configured prefix, so numbers can be reused after old hosts are deleted. During a rolling replacement you can temporarily see a mix such as `SH-006`, `SH-007`, then later `SH-001`, `SH-002`, and `SH-003`.
+
+7. **Automatic Progression**: With the timer running every hour, the system automatically progresses through each batch without manual intervention.
 
 ## Customization Options
 
