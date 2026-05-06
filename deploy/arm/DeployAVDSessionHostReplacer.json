@@ -1262,7 +1262,7 @@
                         {
                           "type": "Microsoft.Network/networkInterfaces",
                           "apiVersion": "2023-09-01",
-                          "name": "[[format('{0}-vNIC', parameters('VMName'))]",
+                          "name": "[[format('nic-{0}', parameters('VMName'))]",
                           "location": "[[parameters('Location')]",
                           "properties": {
                             "ipConfigurations": [
@@ -1297,14 +1297,14 @@
                             },
                             "storageProfile": {
                               "osDisk": {
-                                "name": "[[format('{0}-OSDisk', parameters('VMName'))]",
+                                "name": "[[format('osdisk-{0}', parameters('VMName'))]",
                                 "createOption": "FromImage",
                                 "deleteOption": "Delete",
                                 "managedDisk": {
                                   "storageAccountType": "[[parameters('DiskType')]"
                                 }
                               },
-                              "ImageReference": "[[parameters('ImageReference')]"
+                              "imageReference": "[[parameters('ImageReference')]"
                             },
                             "securityProfile": "[[parameters('SecurityProfile')]",
                             "diagnosticsProfile": {
@@ -1315,7 +1315,7 @@
                             "networkProfile": {
                               "networkInterfaces": [
                                 {
-                                  "id": "[[resourceId('Microsoft.Network/networkInterfaces', format('{0}-vNIC', parameters('VMName')))]",
+                                  "id": "[[resourceId('Microsoft.Network/networkInterfaces', format('nic-{0}', parameters('VMName')))]",
                                   "properties": {
                                     "deleteOption": "Delete"
                                   }
@@ -1326,7 +1326,7 @@
                           },
                           "tags": "[[parameters('Tags')]",
                           "dependsOn": [
-                            "[[resourceId('Microsoft.Network/networkInterfaces', format('{0}-vNIC', parameters('VMName')))]"
+                            "[[resourceId('Microsoft.Network/networkInterfaces', format('nic-{0}', parameters('VMName')))]"
                           ]
                         }
                       ]
