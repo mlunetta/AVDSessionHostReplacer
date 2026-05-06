@@ -284,18 +284,14 @@ var varDomainJoinPasswordReference = IdentityServiceProvider == 'EntraID'
       }
     }
 
-var varAdminPasswordReference = IdentityServiceProvider == 'EntraID'
-  ? null
-  : {
-      reference: {
-        keyVault: {
-          id: deployKeyVault.outputs.keyVaultId
-        }
-        secretName: 'AdminPassword'
-      }
+var varAdminPasswordReference = {
+  reference: {
+    keyVault: {
+      id: deployKeyVault.outputs.keyVaultId
     }
-
-var varAdminPassword = IdentityServiceProvider == 'EntraID' ? LocalAdminPassword : varAdminPasswordReference
+    secretName: 'AdminPassword'
+  }
+}
 
 var varSessionHostTemplateParameters = UseStandardTemplate
   ? {
@@ -310,7 +306,7 @@ var varSessionHostTemplateParameters = UseStandardTemplate
       DomainJoinObject: varDomainJoinObject
       DomainJoinPassword: varDomainJoinPasswordReference
       AdminUsername: LocalAdminUsername
-      AdminPassword: varAdminPassword
+      AdminPassword: varAdminPasswordReference
       VMNamePrefixLength: length(SessionHostNamePrefix) + length(SessionHostNameSeparator) //This is used when deploying in multiple availability zones.
       tags: {}
     }
@@ -499,12 +495,12 @@ module deployFunctionApp 'modules/deployFunctionApp.bicep' = {
   }
 }
 
-module deployKeyVault 'modules/deployKeyVault.bicep' = if (IdentityServiceProvider != 'EntraID') {
+module deployKeyVault 'modules/deployKeyVault.bicep' = {
   name: 'deployKeyVault'
   params: {
     Location: Location
     KeyVaultName: 'kv-avdshr-${varUniqueString}'
-    DomainJoinPassword: ADJoinUserPassword
+    DomainJoinPassword: (IdentityServiceProvider != 'EntraID') ? ADJoinUserPassword : ''
     AdminPassword: LocalAdminPassword
   }
 }

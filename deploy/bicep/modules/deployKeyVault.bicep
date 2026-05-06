@@ -3,12 +3,12 @@ param Location string = resourceGroup().location
 param KeyVaultName string
 
 @secure()
-param DomainJoinPassword string
+param DomainJoinPassword string = ''
 
 @secure()
 param AdminPassword string
 
-//---- Varibalbes ----//
+//---- Variables ----//
 
 //---- Resources ----//
 resource deployKeyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
@@ -23,7 +23,7 @@ resource deployKeyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
     enabledForTemplateDeployment: true
     enableRbacAuthorization: true
   }
-  resource secretDomainJoinPassword 'secrets@2023-07-01' = {
+  resource secretDomainJoinPassword 'secrets@2023-07-01' = if (DomainJoinPassword != '') {
     name: 'DomainJoinPassword'
     properties: {
       value: DomainJoinPassword

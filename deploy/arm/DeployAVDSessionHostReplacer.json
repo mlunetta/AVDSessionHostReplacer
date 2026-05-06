@@ -494,7 +494,7 @@
               },
               {
                 "name": "_SessionHostParameters",
-                "value": "[string(if(parameters('UseStandardTemplate'), createObject('Location', parameters('SessionHostsRegion'), 'AvailabilityZones', parameters('AvailabilityZones'), 'VMSize', parameters('SessionHostSize'), 'AcceleratedNetworking', parameters('AcceleratedNetworking'), 'DiskType', parameters('SessionHostDiskType'), 'ImageReference', variables('varImageReference'), 'SecurityProfile', variables('varSecurityProfile'), 'SubnetId', parameters('SubnetId'), 'DomainJoinObject', variables('varDomainJoinObject'), 'DomainJoinPassword', if(equals(parameters('IdentityServiceProvider'), 'EntraID'), null(), createObject('reference', createObject('keyVault', createObject('id', reference(resourceId('Microsoft.Resources/deployments', 'deployKeyVault'), '2025-04-01').outputs.keyVaultId.value), 'secretName', 'DomainJoinPassword'))), 'AdminUsername', parameters('LocalAdminUsername'), 'AdminPassword', if(equals(parameters('IdentityServiceProvider'), 'EntraID'), parameters('LocalAdminPassword'), if(equals(parameters('IdentityServiceProvider'), 'EntraID'), null(), createObject('reference', createObject('keyVault', createObject('id', reference(resourceId('Microsoft.Resources/deployments', 'deployKeyVault'), '2025-04-01').outputs.keyVaultId.value), 'secretName', 'AdminPassword'))))), 'VMNamePrefixLength', add(length(parameters('SessionHostNamePrefix')), length(parameters('SessionHostNameSeparator'))), 'tags', createObject()), parameters('CustomTemplateSpecParameters')))]"
+                "value":"[string(if(parameters('UseStandardTemplate'),createObject('Location',parameters('SessionHostsRegion'),'AvailabilityZones',parameters('AvailabilityZones'),'VMSize',parameters('SessionHostSize'),'AcceleratedNetworking',parameters('AcceleratedNetworking'),'DiskType',parameters('SessionHostDiskType'),'ImageReference',variables('varImageReference'),'SecurityProfile',variables('varSecurityProfile'),'SubnetId',parameters('SubnetId'),'DomainJoinObject',variables('varDomainJoinObject'),'DomainJoinPassword',if(equals(parameters('IdentityServiceProvider'),'EntraID'),null(),createObject('reference',createObject('keyVault',createObject('id',reference(resourceId('Microsoft.Resources/deployments','deployKeyVault'),'2025-04-01').outputs.keyVaultId.value)),'secretName','DomainJoinPassword')),'AdminUsername',parameters('LocalAdminUsername'),'AdminPassword',createObject('reference',createObject('keyVault',createObject('id',reference(resourceId('Microsoft.Resources/deployments','deployKeyVault'),'2025-04-01').outputs.keyVaultId.value)),'secretName','AdminPassword'),'VMNamePrefixLength',add(length(parameters('SessionHostNamePrefix')),length(parameters('SessionHostNameSeparator'))),'tags',createObject()),parameters('CustomTemplateSpecParameters')))]"
               },
               {
                 "name": "_SubscriptionId",
@@ -780,7 +780,6 @@
       ]
     },
     {
-      "condition": "[not(equals(parameters('IdentityServiceProvider'), 'EntraID'))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2025-04-01",
       "name": "deployKeyVault",
@@ -801,6 +800,9 @@
           },
           "AdminPassword": {
             "value": "[parameters('LocalAdminPassword')]"
+          },
+          "CreateDomainJoinPasswordSecret": {
+            "value": "[not(equals(parameters('IdentityServiceProvider'), 'EntraID'))]"
           }
         },
         "template": {
@@ -826,10 +828,15 @@
             },
             "AdminPassword": {
               "type": "securestring"
+            },
+            "CreateDomainJoinPasswordSecret": {
+              "type": "bool",
+              "defaultValue": true
             }
           },
           "resources": [
             {
+              "condition": "[parameters('CreateDomainJoinPasswordSecret')]",
               "type": "Microsoft.KeyVault/vaults/secrets",
               "apiVersion": "2023-07-01",
               "name": "[format('{0}/{1}', parameters('KeyVaultName'), 'DomainJoinPassword')]",
