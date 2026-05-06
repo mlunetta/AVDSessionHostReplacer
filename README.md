@@ -50,6 +50,8 @@ There are two criteria for replacing a session host,
 1. **Image Version:** Is there a new image version available? If so, we create a new session host with the new image version. This can be from Marketplace or  Gallery Image Definition.
 2. **Session Host VM Age:** If the session host is older than a certain age, default is 45 days, we create a new session host and drain the old one.
 
+For a step-by-step example of how image-based replacement progresses across multiple runs, see [Image Update Examples](IMAGE_UPDATE_EXAMPLES.md).
+
 The core of an AVD Session Host Replacer is an Azure Function App built using PowerShell, the function is triggered every hour to check each session host against the above criteria.
 
 To deploy new session hosts, the function uses an ARM Template that is stored as a Template Spec at deployment time.
