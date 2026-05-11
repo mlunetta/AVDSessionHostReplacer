@@ -71,8 +71,8 @@ Result:
 **Session Hosts Status After Execution**:
 | Name | Image | Status | Notes |
 |------|-------|--------|-------|
-| SH-001 | v1.0 | Draining | Marked for deletion |
-| SH-002 | v1.0 | Draining | Marked for deletion |
+| SH-001 | v1.0 | Available | Waiting to be drained |
+| SH-002 | v1.0 | Available | Waiting to be drained |
 | SH-003 | v1.0 | Available | Waiting to be drained |
 | SH-004 | v1.0 | Available | Waiting to be drained |
 | SH-005 | v1.0 | Available | Waiting to be drained |
